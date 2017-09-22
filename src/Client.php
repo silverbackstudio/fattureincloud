@@ -51,7 +51,7 @@ class Client {
     public function createDoc( $type, Struct\DocNuovoRequest $doc ) {
         
         $response = $this->call( $type . '/nuovo', $doc );
-        
+
         if ( $response !== false ) {
             return new Struct\DocNuovoResponse( json_decode($response->getBody(), true) );
         }
@@ -63,13 +63,20 @@ class Client {
         
         $response = $this->call( $type . '/dettagli', $request );
         
-        if ( $response !== false ) {
-            $dettagliResponse = new Struct\DocDettagliResponse( json_decode($response->getBody(), true) );
-            $dettagliResponse->dettagli_documento = new Struct\DocDetailed( $dettagliResponse->dettagli_documento );
-            return $dettagliResponse;
+        if ( false === $response ) {
+            return false;
         }
         
-        return false;
+        $dettagliResponse = new Struct\DocDettagliResponse( json_decode($response->getBody(), true) );
+
+        if ( !empty( $dettagliResponse->error ) || empty( $dettagliResponse->dettagli_documento ) ) {
+            return false;
+        }
+
+        $dettagliResponse->dettagli_documento = new Struct\DocDetailed( $dettagliResponse->dettagli_documento );
+        
+        return $dettagliResponse;
+        
     }    
     
     public function getInfoList( array $campi ) {
