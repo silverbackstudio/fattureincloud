@@ -1,5 +1,5 @@
 {
-    "name": "silverbackstudio/fattureincloud",
+    "name": "silverback/fattureincloud",
     "type": "library",
     "description": "FattureInCloud API PHP SDK",
     "keywords": ["sdk", "api", "rest", "web service", "client", "fattureincloud"],
