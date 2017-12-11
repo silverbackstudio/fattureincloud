@@ -28,8 +28,23 @@ class Response {
      * @access public
      * @var int
      */
-	public $error_code;    
+	public $error_code;   
+	
 
+    /**
+     * Set to true if the request is successful
+     * 
+     * 
+     * @access public
+     * @var bool
+     */
+	public $success = false;   	
+
+    /**
+     * Class constructor
+     * 
+     * @return void
+     */
     public function __construct( array $properties = array() ) {
         foreach ($properties as $name => $value) {
             $this->$name = $value;

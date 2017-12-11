@@ -31,4 +31,17 @@ class DocDettagliResponse extends Response {
      */
 	public $dettagli_documento;
 
+    /**
+     * Class constructor
+     * 
+     * @return void
+     */
+    public function __construct( array $properties = array() ) {
+        foreach ($properties as $name => $value) {
+            $this->$name = $value;
+        }
+        
+        $this->dettagli_documento = new DocDetailed( $this->dettagli_documento );
+    }
+
 }

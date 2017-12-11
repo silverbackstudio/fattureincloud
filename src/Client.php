@@ -34,6 +34,7 @@ class Client {
 	    $this->api_key = $apikey;
 	    
 		$this->logger = new NullLogger;
+		
 		$this->http_client = new HttpClient( [
             'base_uri' => self::$api_endpoint,
             'timeout'  => 5,
@@ -51,9 +52,9 @@ class Client {
     public function createDoc( $type, Struct\DocNuovoRequest $doc ) {
         
         $response = $this->call( $type . '/nuovo', $doc );
-
+        
         if ( $response !== false ) {
-            return new Struct\DocNuovoResponse( json_decode($response->getBody(), true) );
+            return new Struct\DocNuovoResponse( $response );
         }
         
         return false;
@@ -63,20 +64,11 @@ class Client {
         
         $response = $this->call( $type . '/dettagli', $request );
         
-        if ( false === $response ) {
-            return false;
+        if ( $response !== false ) {
+            return new Struct\DocDettagliResponse( $response );
         }
         
-        $dettagliResponse = new Struct\DocDettagliResponse( json_decode($response->getBody(), true) );
-
-        if ( !empty( $dettagliResponse->error ) || empty( $dettagliResponse->dettagli_documento ) ) {
-            return false;
-        }
-
-        $dettagliResponse->dettagli_documento = new Struct\DocDetailed( $dettagliResponse->dettagli_documento );
-        
-        return $dettagliResponse;
-        
+        return false;
     }    
     
     public function getInfoList( array $campi ) {
@@ -88,7 +80,7 @@ class Client {
         $response = $this->call( 'info/account', $request );
         
         if ( $response !== false ) {
-            return new Struct\InfoListaResponse( json_decode($response->getBody(), true) );
+            return new Struct\InfoListaResponse( $response );
         }
         
         return false;
@@ -104,9 +96,9 @@ class Client {
         
         try {
             
-            $response = $this->http_client->request( $method, $uri, $final_request );
+            $http_response = $this->http_client->request( $method, $uri, $final_request );
             
-            $this->logger->info( 'SUCCESSFUL REQUEST ( ' . $uri . ' )  ', array( 'response' => $response->getBody() ) );            
+            $this->logger->info( 'SUCCESSFUL REQUEST ( ' . $uri . ' )  ', array( 'response' => $http_response->getBody() ) );            
             
         } catch ( RequestException $e ) {
 
@@ -116,6 +108,13 @@ class Client {
                 ) 
             );
             
+            return false;
+        }
+        
+        $response = json_decode($http_response->getBody(), true);
+        
+        if( null === $response ) {
+            $this->logger->critical( 'FATTUREINCLOUD JSON RESPONSE ERROR ( ' . $uri . ' ): JSON ERR: ' . json_last_error() . ' - JSON: ' . $http_response->getBody() );            
             return false;
         }
         
