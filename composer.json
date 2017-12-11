@@ -12,7 +12,6 @@
             "homepage": "https://github.com/silverbackstudio"
         }
     ],
-    "version": "1.0",
     "require": {
         "php": ">=5.6",
         "psr/log": "^1.0",
