@@ -1,6 +1,6 @@
 {
     "name": "silverback/fattureincloud",
-    "type": "library",
+    "type": "wordpress-plugin",
     "description": "FattureInCloud API PHP SDK",
     "keywords": ["sdk", "api", "rest", "web service", "client", "fattureincloud"],
     "homepage": "https://github.com/silverbackstudio/fattureincloud/",
